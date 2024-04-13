@@ -1,11 +1,17 @@
-let run source = print_endline source
+open Olox
+
+let run source =
+  let lexer = Lexer.init source in
+  let lexer = Lexer.scan_tokens lexer in
+  List.iter (fun t -> print_endline (Token.show t)) lexer.tokens;
+  false
 
 let run_prompt () =
   let rec loop () =
     print_string "> ";
     flush stdout;
     let code = try Some (input_line stdin) with End_of_file -> None in
-    (match code with None -> exit 0 | Some source -> run source);
+    let _ = match code with None -> exit 0 | Some source -> run source in
     loop ()
   in
   loop ()
@@ -13,7 +19,8 @@ let run_prompt () =
 let run_file _filename =
   let ic = open_in _filename in
   let content = In_channel.input_all ic in
-  run content
+  let had_error = run content in
+  if had_error then exit 1
 
 let main () =
   let args = Sys.argv in

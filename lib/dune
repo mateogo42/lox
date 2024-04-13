@@ -1,2 +1,4 @@
 (library
- (name olox))
+ (name olox)
+ (preprocess (pps ppx_deriving.show ppx_deriving.ord))
+ (libraries fmt))
